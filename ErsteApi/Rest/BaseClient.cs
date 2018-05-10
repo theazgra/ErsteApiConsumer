@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ErsteApi.Rest
 {
-    internal class BaseClient
+    internal abstract class BaseClient
     {
         #region Properties
         /// <summary>
