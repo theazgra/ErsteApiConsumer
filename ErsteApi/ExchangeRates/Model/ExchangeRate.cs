@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ErsteApi.ExchangeRates.Model
 {
-    class ExchangeRate : IEquatable<ExchangeRate>
+    public class ExchangeRate : IEquatable<ExchangeRate>
     {
         /// <summary>
         /// Name of the country.
@@ -76,6 +77,19 @@ namespace ErsteApi.ExchangeRates.Model
                 (this.Name == other.Name) &&
                 (this.Country == other.Country)
                 );
+        }
+
+        /// <summary>
+        /// Generated.
+        /// </summary>
+        /// <returns>Hash code.</returns>
+        public override int GetHashCode()
+        {
+            var hashCode = -521618878;
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Country);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CurrencyCode);
+            return hashCode;
         }
     }
 }
