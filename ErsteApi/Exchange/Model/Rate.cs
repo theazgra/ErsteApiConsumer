@@ -1,22 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ErsteApi.ExchangeRates.Model
+namespace ErsteApi.Exchange.Model
 {
-    public class ExchangeRate : IEquatable<ExchangeRate>
+    public class Rate : IEquatable<Rate>
     {
         /// <summary>
-        /// Name of the country.
+        /// Currency of the rate.
         /// </summary>
-        public string Country { get; }
-        /// <summary>
-        /// Name of currency.
-        /// </summary>
-        public string Name { get; }
-        /// <summary>
-        /// Code of currency.
-        /// </summary>
-        public string CurrencyCode { get; }
+        public Currency Currency { get; }
+
         /// <summary>
         /// Amount of selected currency for conversion.
         /// </summary>
@@ -56,7 +49,7 @@ namespace ErsteApi.ExchangeRates.Model
         /// <summary>
         /// Middle exchange rate of Czech National Bank.
         /// </summary>
-        public float MiddleEchangeRate { get; }
+        public float CNBMiddleRate { get; }
         /// <summary>
         /// Order of exchange rate for selected day.
         /// </summary>
@@ -64,18 +57,16 @@ namespace ErsteApi.ExchangeRates.Model
 
         public override bool Equals(object obj)
         {
-            if (obj is ExchangeRate er)
+            if (obj is Rate er)
                 return Equals(er);
 
             return base.Equals(obj);
         }
 
-        public bool Equals(ExchangeRate other)
+        public bool Equals(Rate other)
         {
             return (
-                (this.CurrencyCode == other.CurrencyCode) &&
-                (this.Name == other.Name) &&
-                (this.Country == other.Country)
+                this.Currency == other.Currency && this.ValidFrom == other.ValidFrom
                 );
         }
 
@@ -86,9 +77,8 @@ namespace ErsteApi.ExchangeRates.Model
         public override int GetHashCode()
         {
             var hashCode = -521618878;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Country);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(CurrencyCode);
+            hashCode = hashCode * -1521134295 + EqualityComparer<Currency>.Default.GetHashCode(Currency);
+            hashCode = hashCode * -1521134295 + EqualityComparer<DateTime>.Default.GetHashCode(ValidFrom);
             return hashCode;
         }
     }

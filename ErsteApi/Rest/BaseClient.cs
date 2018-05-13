@@ -39,10 +39,11 @@ namespace ErsteApi.Rest
         /// <summary>
         /// Return new RestClient with default timeout.
         /// </summary>
+        /// <param name="baseUrl">Base client url.</param>
         /// <returns>Rest client with default timeout.</returns>
-        protected virtual RestClient GetClient()
+        protected virtual RestClient GetClient(string baseUrl)
         {
-            RestClient restClient = new RestClient()
+            RestClient restClient = new RestClient(baseUrl)
             {
                 Timeout = DefaultTimeout
             };
@@ -63,13 +64,14 @@ namespace ErsteApi.Rest
 
             foreach (RestParameter restParam in RestQueryParameters)
             {
-                request.AddQueryParameter(restParam.Name(), restParam.Value());
+                request.AddParameter(restParam.Name(), restParam.Value(), restParam.ParamType());
             }
         }
 
         /// <summary>
         /// Create rest request.
         /// </summary>
+        /// <param name="method">Request method.</param>
         /// <returns>Rest request with header fields and rest query parameters.</returns>
         protected IRestRequest CreateRequest(Method restMethod = Method.GET)
         {

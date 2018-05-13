@@ -24,9 +24,9 @@ namespace ErsteApi.Rest
             _customJsonSerialized = jsonDeserializer;
         }
 
-        protected override RestClient GetClient()
+        protected override RestClient GetClient(string baseUrl)
         {
-            RestClient restClient = new RestClient()
+            RestClient restClient = new RestClient(baseUrl)
             {
                 Timeout = DefaultTimeout
             };
@@ -45,7 +45,7 @@ namespace ErsteApi.Rest
         /// <returns>Rest response or null if request was not succesfull.</returns>
         private IRestResponse<T> ExecuteRequest(IRestRequest restRequest, out bool succes)
         {
-            RestClient restClient = GetClient();
+            RestClient restClient = GetClient(restRequest.Resource);
 
             try
             {
@@ -69,7 +69,7 @@ namespace ErsteApi.Rest
         /// <returns>RestRequestAsyncHandle to request.</returns>
         private RestRequestAsyncHandle ExecuteRequestAsync(IRestRequest restRequest, Action<IRestResponse<T>> callback)
         {
-            RestClient restClient = GetClient();
+            RestClient restClient = GetClient(restRequest.Resource);
 
             try
             {
@@ -95,10 +95,11 @@ namespace ErsteApi.Rest
         /// <summary>
         /// Execute rest request and return response of given type.
         /// </summary>
+        /// <param name="method">Request method.</param>
         /// <returns>Rest response of given type.</returns>
-        internal IRestResponse<T> ExecuteRequest() 
+        internal IRestResponse<T> ExecuteRequest(Method method = Method.GET) 
         {
-            IRestRequest request = CreateRequest();
+            IRestRequest request = CreateRequest(method);
 
             IRestResponse<T> response = ExecuteRequest(request, out bool success);
 
@@ -111,9 +112,10 @@ namespace ErsteApi.Rest
         /// <summary>
         /// Execute rest request and call callback with response of given type, when request is finished.
         /// </summary>
-        internal void ExecuteRequestAsync()
+        /// <param name="method">Request method.</param>
+        internal void ExecuteRequestAsync(Method method = Method.GET)
         {
-            IRestRequest request = CreateRequest();
+            IRestRequest request = CreateRequest(method);
             ExecuteRequestAsync(request, TypedCallback);
         }
     }

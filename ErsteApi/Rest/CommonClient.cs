@@ -28,8 +28,7 @@ namespace ErsteApi.Rest
         /// <returns>Rest response or null if request was not succesfull.</returns>
         private IRestResponse ExecuteRequest(IRestRequest restRequest, out bool succes)
         {
-            RestClient restClient = GetClient();
-
+            RestClient restClient = GetClient(restRequest.Resource);
             try
             {
                 IRestResponse response = restClient.Execute(restRequest);
@@ -52,7 +51,7 @@ namespace ErsteApi.Rest
         /// <returns>RestRequestAsyncHandle to request.</returns>
         private RestRequestAsyncHandle ExecuteRequestAsync(IRestRequest restRequest, Action<IRestResponse> callback)
         {
-            RestClient restClient = GetClient();
+            RestClient restClient = GetClient(restRequest.Resource);
 
             try
             {
@@ -78,10 +77,11 @@ namespace ErsteApi.Rest
         /// <summary>
         /// Execute rest request and return generic response.
         /// </summary>
+        /// <param name="method">Request method.</param>
         /// <returns>Generic rest response.</returns>
-        internal IRestResponse ExecuteRequest()
+        internal IRestResponse ExecuteRequest(Method method = Method.GET)
         {
-            IRestRequest request = CreateRequest();
+            IRestRequest request = CreateRequest(method);
 
             IRestResponse response = ExecuteRequest(request, out bool success);
 
@@ -94,9 +94,10 @@ namespace ErsteApi.Rest
         /// <summary>
         /// Execute rest request and call callback with generic response, when request is finished.
         /// </summary>
-        internal void ExecuteRequestAsync()
+        /// <param name="method">Request method.</param>
+        internal void ExecuteRequestAsync(Method method = Method.GET)
         {
-            IRestRequest request = CreateRequest();
+            IRestRequest request = CreateRequest(method);
 
             ExecuteRequestAsync(request, Callback);
         }
