@@ -39,11 +39,10 @@ namespace ErsteApi.Rest
         /// <summary>
         /// Return new RestClient with default timeout.
         /// </summary>
-        /// <param name="baseUrl">Base client url.</param>
-        /// <returns>Rest client with default timeout.</returns>
-        protected virtual RestClient GetClient(string baseUrl)
+        /// <returns>Rest client with default timeout.</returns
+        protected virtual RestClient GetClient()
         {
-            RestClient restClient = new RestClient(baseUrl)
+            RestClient restClient = new RestClient(Configuration.ErsteApiConfig.BaseApiUrl)
             {
                 Timeout = DefaultTimeout
             };

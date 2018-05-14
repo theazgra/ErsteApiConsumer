@@ -2,6 +2,7 @@
 using RestSharp;
 using System.Diagnostics;
 using RestSharp.Deserializers;
+using ErsteApi.Configuration;
 
 namespace ErsteApi.Rest
 {
@@ -24,9 +25,9 @@ namespace ErsteApi.Rest
             _customJsonSerialized = jsonDeserializer;
         }
 
-        protected override RestClient GetClient(string baseUrl)
+        protected override RestClient GetClient()
         {
-            RestClient restClient = new RestClient(baseUrl)
+            RestClient restClient = new RestClient(ErsteApiConfig.BaseApiUrl)
             {
                 Timeout = DefaultTimeout
             };
@@ -45,7 +46,7 @@ namespace ErsteApi.Rest
         /// <returns>Rest response or null if request was not succesfull.</returns>
         private IRestResponse<T> ExecuteRequest(IRestRequest restRequest, out bool succes)
         {
-            RestClient restClient = GetClient(restRequest.Resource);
+            RestClient restClient = GetClient();
 
             try
             {
@@ -57,6 +58,10 @@ namespace ErsteApi.Rest
             {
                 Debug.WriteLine("Error executing rest request: " + e.Message);
                 succes = false;
+
+                if (ErsteApiConfig.ThrowOnException)
+                    throw;
+
                 return null;
             }
         }
@@ -67,9 +72,9 @@ namespace ErsteApi.Rest
         /// <param name="restRequest">Request to execute.</param>
         /// <param name="callback">Callback to be called when request is finished.</param>
         /// <returns>RestRequestAsyncHandle to request.</returns>
-        private RestRequestAsyncHandle ExecuteRequestAsync(IRestRequest restRequest, Action<IRestResponse<T>> callback)
+        private RestRequestAsyncHandle ExecRequestAsync(IRestRequest restRequest, Action<IRestResponse<T>> callback)
         {
-            RestClient restClient = GetClient(restRequest.Resource);
+            RestClient restClient = GetClient();
 
             try
             {
@@ -79,6 +84,10 @@ namespace ErsteApi.Rest
             catch (Exception e)
             {
                 Debug.WriteLine("Error executing rest request: " + e.Message);
+
+                if (ErsteApiConfig.ThrowOnException)
+                    throw;
+
                 return null;
             }
         }
@@ -110,13 +119,24 @@ namespace ErsteApi.Rest
         }
 
         /// <summary>
-        /// Execute rest request and call callback with response of given type, when request is finished.
+        /// Execute rest request and invoke callback, when request is finished.
+        /// </summary>
+        /// <param name="callback">Callback to be invoked when request is finished.</param>
+        /// <param name="method">Request method.</param>
+        internal void ExecuteRequestAsync(Action<IRestResponse<T>> callback, Method method = Method.GET)
+        {
+            IRestRequest request = CreateRequest(method);
+            ExecRequestAsync(request, callback);
+        }
+
+        /// <summary>
+        /// Execute rest request and invoke OnRequestFinished with response of given type, when request is finished.
         /// </summary>
         /// <param name="method">Request method.</param>
         internal void ExecuteRequestAsync(Method method = Method.GET)
         {
             IRestRequest request = CreateRequest(method);
-            ExecuteRequestAsync(request, TypedCallback);
+            ExecRequestAsync(request, TypedCallback);
         }
     }
 }

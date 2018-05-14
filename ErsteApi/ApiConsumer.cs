@@ -20,9 +20,9 @@ namespace ErsteApi
         /// </summary>
         internal protected string language;
 
-        internal ApiConsumer(string baseUrl, string apiKey, string language)
+        internal ApiConsumer(string apiKey, string language)
         {
-            this.baseUrl = baseUrl;
+            this.baseUrl = Configuration.ErsteApiConfig.BaseApiUrl;
             this.apiKey = apiKey;
             this.language = language;
         }

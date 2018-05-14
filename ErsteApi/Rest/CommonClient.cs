@@ -1,6 +1,7 @@
 ﻿using System;
 using RestSharp;
 using System.Diagnostics;
+using ErsteApi.Configuration;
 
 namespace ErsteApi.Rest
 {
@@ -28,7 +29,7 @@ namespace ErsteApi.Rest
         /// <returns>Rest response or null if request was not succesfull.</returns>
         private IRestResponse ExecuteRequest(IRestRequest restRequest, out bool succes)
         {
-            RestClient restClient = GetClient(restRequest.Resource);
+            RestClient restClient = GetClient();
             try
             {
                 IRestResponse response = restClient.Execute(restRequest);
@@ -39,6 +40,10 @@ namespace ErsteApi.Rest
             {
                 Debug.WriteLine("Error executing rest request: " + e.Message);
                 succes = false;
+
+                if (ErsteApiConfig.ThrowOnException)
+                    throw;
+
                 return null;
             }
         }
@@ -49,9 +54,9 @@ namespace ErsteApi.Rest
         /// <param name="restRequest">Request to execute.</param>
         /// <param name="callback">Callback to be called when request is finished.</param>
         /// <returns>RestRequestAsyncHandle to request.</returns>
-        private RestRequestAsyncHandle ExecuteRequestAsync(IRestRequest restRequest, Action<IRestResponse> callback)
+        private RestRequestAsyncHandle ExecRequestAsync(IRestRequest restRequest, Action<IRestResponse> callback)
         {
-            RestClient restClient = GetClient(restRequest.Resource);
+            RestClient restClient = GetClient();
 
             try
             {
@@ -61,6 +66,10 @@ namespace ErsteApi.Rest
             catch (Exception e)
             {
                 Debug.WriteLine("Error executing rest request: " + e.Message);
+
+                if (ErsteApiConfig.ThrowOnException)
+                    throw;
+
                 return null;
             }
         }
@@ -92,14 +101,25 @@ namespace ErsteApi.Rest
         }
 
         /// <summary>
-        /// Execute rest request and call callback with generic response, when request is finished.
+        /// Execute rest request and invoke callback, when request is finished.
+        /// </summary>
+        /// <param name="callback">Callback to be invoked when request is finished.</param>
+        /// <param name="method">Request method.</param>
+        internal void ExecuteRequestAsync(Action<IRestResponse> callback, Method method = Method.GET)
+        {
+            IRestRequest request = CreateRequest(method);
+            ExecRequestAsync(request, callback);
+        }
+
+        /// <summary>
+        /// Execute rest request and invoke OnRequestFinishedresponse, when request is finished.
         /// </summary>
         /// <param name="method">Request method.</param>
         internal void ExecuteRequestAsync(Method method = Method.GET)
         {
             IRestRequest request = CreateRequest(method);
 
-            ExecuteRequestAsync(request, Callback);
+            ExecRequestAsync(request, Callback);
         }
     }
 }
