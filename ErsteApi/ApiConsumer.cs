@@ -65,7 +65,7 @@ namespace ErsteApi
         /// <typeparam name="T">Type to which parse response.</typeparam>
         /// /// <param name="apiUrl">Requested api location.</param>
         /// <returns>Typed rest client.</returns>
-        internal Client<T> GetClient<T>(string apiUrl) where T : new()
+        internal Client<T> GetClient<T>(string apiUrl)
         {
             Client<T> restClient = new Client<T>(CombineUrl(baseUrl, apiUrl));
             AddBasicParameters(restClient);

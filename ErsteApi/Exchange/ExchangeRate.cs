@@ -24,10 +24,10 @@ namespace ErsteApi.Exchange
         /// <returns>Enumerable of all currencies.</returns>
         public IEnumerable<Currency> GetAllCurrencies()
         {
-            Client client = GetClient(ErsteApiConfig.ExchangeRateConfig.CurrenciesUrl);
-
-            IRestResponse response = client.ExecuteRequest();
-            _currencies = Converter.DeserializeCollection<Currency>(response.Content);
+            Client<IEnumerable<Currency>> client = 
+                GetClient<IEnumerable<Currency>>(ErsteApiConfig.ExchangeRateConfig.CurrenciesUrl);
+           
+            _currencies = client.ExecuteRequest();
 
             return _currencies;
         }

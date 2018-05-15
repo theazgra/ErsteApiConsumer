@@ -13,12 +13,12 @@
             if (ConfigurationHelper.TryGetValue("currenciesUrl", out string currUrl))
                 CurrenciesUrl = currUrl;
             else
-                CurrenciesUrl = "rates/exchangerates";
+                CurrenciesUrl = "rates/exchangerates/currencies";
 
             if (ConfigurationHelper.TryGetValue("exchangeRatesUrl", out string exchgRtsUrl))
                 ExchangeRatesUrl = exchgRtsUrl;
             else
-                ExchangeRatesUrl = "rates/exchangerates/currencies";
+                ExchangeRatesUrl = "rates/exchangerates";
 
             if (ConfigurationHelper.TryGetValue("crossRatesUrl", out string crossUrl))
                 CrossRatesUrl = crossUrl;
