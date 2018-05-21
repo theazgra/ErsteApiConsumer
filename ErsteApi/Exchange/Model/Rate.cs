@@ -1,59 +1,81 @@
 ﻿using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace ErsteApi.Exchange.Model
 {
     public class Rate : IEquatable<Rate>
     {
+        [JsonProperty("shortName")]
+        internal string ShortName
+        {
+            set
+            {
+                Currency = ExchangeRate.currencies.FirstOrDefault(c => c.CurrencyCode == value);
+            }
+        }
+
         /// <summary>
         /// Currency of the rate.
         /// </summary>
-        public Currency Currency { get; }
-
+        [JsonIgnore]
+        public Currency Currency { get; internal set;}
         /// <summary>
         /// Amount of selected currency for conversion.
         /// </summary>
-        public float Amount { get; }
+        [JsonProperty("amount")]
+        public float Amount { get; internal set;}
         /// <summary>
         /// DateTime from which is this exchange rate valid.
         /// </summary>
-        public DateTime ValidFrom { get; }
+        [JsonProperty("validFrom")]
+        public DateTime ValidFrom { get; internal set;}
         /// <summary>
         /// Exchange rate for cash transactions - buy.
         /// </summary>
-        public float BuyCashRate { get; }
+        [JsonProperty("valBuy")]
+        public float BuyCashRate { get; internal set;}
         /// <summary>
         /// Exchange rate for cash transactions - sell.
         /// </summary>
-        public float SellCashRate { get; }
+        [JsonProperty("valSell")]
+        public float SellCashRate { get; internal set;}
         /// <summary>
         /// Exchange rate for cash transactions - middle.
         /// </summary>
-        public float MiddleCashRate { get; }
+        [JsonProperty("valMid")]
+        public float MiddleCashRate { get; internal set;}
         /// <summary>
         /// Exchange rate for non-cash transactions - buy.
         /// </summary>
-        public float BuyCurrenceRate { get; }
+        [JsonProperty("currBuy")]
+        public float BuyCurrenceRate { get; internal set;}
         /// <summary>
         /// Exchange rate for non-cash transactions - sell.
         /// </summary>
-        public float SellCurrenceRate { get; }
+        [JsonProperty("currSell")]
+        public float SellCurrenceRate { get; internal set;}
         /// <summary>
         /// Exchange rate for non-cash transactions - middle.
         /// </summary>
-        public float MiddleCurrenceRate { get; }
+        [JsonProperty("currMid")]
+        public float MiddleCurrenceRate { get; internal set;}
         /// <summary>
         /// Change of exchange rates value opossite last state.
         /// </summary>
-        public float ChangeFromLastState { get; }
+        [JsonProperty("move")]
+        public float ChangeFromLastState { get; internal set;}
         /// <summary>
         /// Middle exchange rate of Czech National Bank.
         /// </summary>
-        public float CNBMiddleRate { get; }
+        [JsonProperty("cnbMid")]
+        public float CNBMiddleRate { get; internal set;}
         /// <summary>
         /// Order of exchange rate for selected day.
         /// </summary>
-        public int DayVersion { get; }
+        [JsonProperty("version")]
+        public int DayVersion { get; internal set;}
 
         public override bool Equals(object obj)
         {

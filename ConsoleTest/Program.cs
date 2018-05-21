@@ -10,20 +10,21 @@ namespace ConsoleTest
     {
         static void Main(string[] args)
         {
-            
+            ExchangeRate exchangeRate = new ExchangeRate(@"52d55cea-09d1-4e66-b70f-798f2b4feb32");
+            var exrts = exchangeRate.GetAllExchangeRatesFrom(DateTime.Today.AddMonths(-6));
 
-            Test();
+
+
+            //Test();
             Console.ReadLine();
            
         }
 
         static async void Test()
         {
-            ExchangeRate exchangeRate = new ExchangeRate(
-                @"52d55cea-09d1-4e66-b70f-798f2b4feb32",
-                "en");
+            
 
-            var curs = await exchangeRate.GetAllCurrenciesAsync();
+            //var curs = await exchangeRate.GetAllCurrenciesAsync()
 
             Console.WriteLine("I have waited.");
 
