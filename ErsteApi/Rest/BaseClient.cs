@@ -1,4 +1,5 @@
-﻿using RestSharp;
+﻿using ErsteApi.Configuration;
+using RestSharp;
 using System.Collections.Generic;
 
 namespace ErsteApi.Rest
@@ -42,7 +43,7 @@ namespace ErsteApi.Rest
         /// <returns>Rest client with default timeout.</returns
         protected virtual RestClient GetClient()
         {
-            RestClient restClient = new RestClient(Configuration.ErsteApiConfig.BaseApiUrl)
+            RestClient restClient = new RestClient(ConfigSingleton.Instance.ApiConfig.BaseApiUrl)
             {
                 Timeout = DefaultTimeout
             };

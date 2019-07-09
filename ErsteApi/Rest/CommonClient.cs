@@ -41,7 +41,7 @@ namespace ErsteApi.Rest
                 Debug.WriteLine("Error executing rest request: " + e.Message);
                 succes = false;
 
-                if (ErsteApiConfig.ThrowOnException)
+                if (ConfigSingleton.Instance.ApiConfig.ThrowOnException)
                     throw;
 
                 return null;
@@ -67,7 +67,7 @@ namespace ErsteApi.Rest
             {
                 Debug.WriteLine("Error executing rest request: " + e.Message);
 
-                if (ErsteApiConfig.ThrowOnException)
+                if (ConfigSingleton.Instance.ApiConfig.ThrowOnException)
                     throw;
 
                 return null;

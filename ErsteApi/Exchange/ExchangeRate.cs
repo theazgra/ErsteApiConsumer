@@ -25,40 +25,28 @@ namespace ErsteApi.Exchange
         public IEnumerable<Currency> GetAllCurrencies()
         {
             Client<IEnumerable<Currency>> client =
-                GetClient<IEnumerable<Currency>>(ErsteApiConfig.ExchangeRateConfig.CurrenciesUrl);
+                GetClient<IEnumerable<Currency>>(ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig.CurrenciesUrl);
 
             currencies = client.ExecuteRequest();
 
             return currencies;
         }
 
-        /// <summary>
-        /// Get enumerable of all currencies async.
-        /// </summary>
-        /// <param name="cancellationToken">Token to cancel this operation.</param>
-        /// <returns>Enumerable of all currencies.</returns>
-        public Task<IEnumerable<Currency>> GetAllCurrenciesAsync(CancellationToken cancellationToken = default(CancellationToken))
-            => Task.Run(() => GetAllCurrencies(), cancellationToken);
+        
 
-       
+
         /// <summary>
         /// Get enumerable of all current exchange rates.
         /// </summary>
         /// <returns>Enumerable of all current exchange rates.</returns>
         public IEnumerable<Rate> GetAllExchangeRates()
         {
-            Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(ErsteApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
+            Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
             IEnumerable<Rate> rates = client.ExecuteRequest();
             return rates;
         }
 
-        /// <summary>
-        /// Get enumerable of all exchange rates async.
-        /// </summary>
-        /// <param name="cancellationToken">Token to cancel this operation.</param>
-        /// <returns>Enumerable of all exchange rates.</returns>
-        public Task<IEnumerable<Rate>> GetAllExchangeRatesAsync(CancellationToken cancellationToken = default(CancellationToken))
-            => Task.Run(() => GetAllExchangeRates(), cancellationToken);
+       
 
 
         /// <summary>
@@ -69,28 +57,71 @@ namespace ErsteApi.Exchange
         /// <returns>Enumerable of all exchange rates in specified perion.</returns>
         public IDictionary<DateTime, IEnumerable<Rate>> GetAllExchangeRatesInPeriod(DateTime? from = null, DateTime? to = null)
         {
-            //this is TODO.
-            throw new NotImplementedException();
-            Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(ErsteApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
+            //TODO: What is response for this API call? API does not work at this moment so we don't know.
+            //Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(ErsteApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
+            Client client = GetClient(ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
 
             if (from.HasValue)
                 client.RestQueryParameters.Add(new RestParameter("fromDate", from.Value.ToRestFormat()));
             if (to.HasValue)
                 client.RestQueryParameters.Add(new RestParameter("toDate", to.Value.ToRestFormat()));
 
+            var response = client.ExecuteRequest();
+
+            /*
             IEnumerable<Rate> rates = client.ExecuteRequest();
             return rates;
+            */
+            throw new NotImplementedException();
         }
+
+      
+
+
 
         public Rate GetExchangeRate(string currencyCode)
         {
             throw new NotImplementedException();
         }
 
+
         public IEnumerable<Rate> GetExchangeRateInPeriod(string currencyCode, DateTime? from = null, DateTime? to = null)
         {
             throw new NotImplementedException();
         }
+
+
+        #region AsyncWrappers
+
+        /// <summary>
+        /// Get enumerable of all currencies async.
+        /// </summary>
+        /// <param name="cancellationToken">Token to cancel this operation.</param>
+        /// <returns>Enumerable of all currencies.</returns>
+        public Task<IEnumerable<Currency>> 
+            GetAllCurrenciesAsync(CancellationToken cancellationToken = default(CancellationToken)) => Task.Run(() => GetAllCurrencies(), cancellationToken);
+
+        /// <summary>
+        /// Get enumerable of all exchange rates async.
+        /// </summary>
+        /// <param name="cancellationToken">Token to cancel this operation.</param>
+        /// <returns>Enumerable of all exchange rates.</returns>
+        public Task<IEnumerable<Rate>> 
+            GetAllExchangeRatesAsync(CancellationToken cancellationToken = default(CancellationToken))=> Task.Run(() => GetAllExchangeRates(), cancellationToken);
+
+        public Task<IDictionary<DateTime, IEnumerable<Rate>>> GetAllExchangeRatesInPeriodAsync
+          (DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default(CancellationToken))
+          => Task.Run(() => GetAllExchangeRatesInPeriod(from, to), cancellationToken);
+
+        public Task<Rate> GetExchangeRateAsync(string currencyCode, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.Run(() => GetExchangeRate(currencyCode), cancellationToken);
+
+        public Task<IEnumerable<Rate>> GetExchangeRateInPeriod
+            (string currencyCode, DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default(CancellationToken))
+            => Task.Run(() => GetExchangeRateInPeriod(currencyCode, from, to), cancellationToken);
+
+        #endregion
+
 
 
     }

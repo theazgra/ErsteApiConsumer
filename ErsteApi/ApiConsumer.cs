@@ -1,4 +1,5 @@
-﻿using ErsteApi.Rest;
+﻿using ErsteApi.Configuration;
+using ErsteApi.Rest;
 
 namespace ErsteApi
 {
@@ -22,7 +23,7 @@ namespace ErsteApi
 
         internal ApiConsumer(string apiKey, string language)
         {
-            this.baseUrl = Configuration.ErsteApiConfig.BaseApiUrl;
+            this.baseUrl = ConfigSingleton.Instance.ApiConfig.BaseApiUrl;
             this.apiKey = apiKey;
             this.language = language;
         }

@@ -25,7 +25,7 @@ namespace ErsteApi.Rest
 
         protected override RestClient GetClient()
         {
-            RestClient restClient = new RestClient(ErsteApiConfig.BaseApiUrl)
+            RestClient restClient = new RestClient(ConfigSingleton.Instance.ApiConfig.BaseApiUrl)
             {
                 Timeout = DefaultTimeout
             };
@@ -54,7 +54,7 @@ namespace ErsteApi.Rest
                 Debug.WriteLine("Error executing rest request: " + e.Message);
                 succes = false;
 
-                if (ErsteApiConfig.ThrowOnException)
+                if (ConfigSingleton.Instance.ApiConfig.ThrowOnException)
                     throw;
 
                 return null;
@@ -80,7 +80,7 @@ namespace ErsteApi.Rest
             {
                 Debug.WriteLine("Error executing rest request: " + e.Message);
 
-                if (ErsteApiConfig.ThrowOnException)
+                if (ConfigSingleton.Instance.ApiConfig.ThrowOnException)
                     throw;
 
                 return null;
@@ -102,7 +102,7 @@ namespace ErsteApi.Rest
         /// </summary>
         /// <param name="method">Request method.</param>
         /// <returns>Rest response of given type.</returns>
-        internal T ExecuteRequest(Method method = Method.GET) 
+        internal T ExecuteRequest(Method method = Method.GET)
         {
             IRestRequest request = CreateRequest(method);
 
@@ -115,10 +115,10 @@ namespace ErsteApi.Rest
             }
             else
             {
-                if (ErsteApiConfig.ThrowOnException)
+                if (ConfigSingleton.Instance.ApiConfig.ThrowOnException)
                     throw new RestException("Error executing rest request.");
 
-                return default(T);
+                return default;
             }
         }
 

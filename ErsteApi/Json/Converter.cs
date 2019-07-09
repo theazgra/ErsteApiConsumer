@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using ErsteApi.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -67,7 +68,7 @@ namespace ErsteApi.Json
             }
             catch (Exception)
             {
-                if (Configuration.ErsteApiConfig.ThrowOnException)
+                if (ConfigSingleton.Instance.ApiConfig.ThrowOnException)
                     throw;
 
                 return default(T);

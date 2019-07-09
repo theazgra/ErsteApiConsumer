@@ -1,0 +1,13 @@
+{
+    "defaultLanguage": "en",
+    "baseApiUrl": "baseApiUrl",
+    "defaultTimeout": 1000,
+    "throwOnException": true,
+    "exchangeRateConfig": {
+        "currenciesUrl": "currenciesUrl",
+        "exchangeRatesUrl": "exchangeRatesUrl",
+        "crossRatesUrl": "crossRatesUrl",
+        "exchangeRatesDayTimesUrl": "exchangeRatesDayTimesUrl",
+        "healthCheckUrl": "healthCheckUrl"
+    }
+}
