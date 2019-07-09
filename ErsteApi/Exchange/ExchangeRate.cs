@@ -2,7 +2,6 @@
 using ErsteApi.Rest;
 using System;
 using System.Collections.Generic;
-using ErsteApi.Configuration;
 using System.Threading.Tasks;
 using System.Threading;
 using ErsteApi.Json;
@@ -11,11 +10,13 @@ namespace ErsteApi.Exchange
 {
     public class ExchangeRate : ApiConsumer
     {
+        private Configuration.ExchangeRateConfig _config;
         internal static IEnumerable<Currency> currencies;
 
         public ExchangeRate(string apiKey, string language = "cs") : base(apiKey, language)
         {
-            currencies = GetAllCurrencies();
+            _config = Configuration.ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig;
+            //currencies = GetAllCurrencies();
         }
 
         /// <summary>
@@ -25,14 +26,14 @@ namespace ErsteApi.Exchange
         public IEnumerable<Currency> GetAllCurrencies()
         {
             Client<IEnumerable<Currency>> client =
-                GetClient<IEnumerable<Currency>>(ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig.CurrenciesUrl);
+                GetClient<IEnumerable<Currency>>(_config.BaseUrl, _config.CurrenciesUrl);
 
             currencies = client.ExecuteRequest();
 
             return currencies;
         }
 
-        
+
 
 
         /// <summary>
@@ -41,12 +42,12 @@ namespace ErsteApi.Exchange
         /// <returns>Enumerable of all current exchange rates.</returns>
         public IEnumerable<Rate> GetAllExchangeRates()
         {
-            Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
+            Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(_config.BaseUrl, _config.ExchangeRatesUrl);
             IEnumerable<Rate> rates = client.ExecuteRequest();
             return rates;
         }
 
-       
+
 
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace ErsteApi.Exchange
         {
             //TODO: What is response for this API call? API does not work at this moment so we don't know.
             //Client<IEnumerable<Rate>> client = GetClient<IEnumerable<Rate>>(ErsteApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
-            Client client = GetClient(ConfigSingleton.Instance.ApiConfig.ExchangeRateConfig.ExchangeRatesUrl);
+            Client client = GetClient(_config.BaseUrl, _config.ExchangeRatesUrl);
 
             if (from.HasValue)
                 client.RestQueryParameters.Add(new RestParameter("fromDate", from.Value.ToRestFormat()));
@@ -75,7 +76,7 @@ namespace ErsteApi.Exchange
             throw new NotImplementedException();
         }
 
-      
+
 
 
 
@@ -90,6 +91,8 @@ namespace ErsteApi.Exchange
             throw new NotImplementedException();
         }
 
+        protected override string GetGroupUrl() => _config.BaseUrl;
+
 
         #region AsyncWrappers
 
@@ -98,7 +101,7 @@ namespace ErsteApi.Exchange
         /// </summary>
         /// <param name="cancellationToken">Token to cancel this operation.</param>
         /// <returns>Enumerable of all currencies.</returns>
-        public Task<IEnumerable<Currency>> 
+        public Task<IEnumerable<Currency>>
             GetAllCurrenciesAsync(CancellationToken cancellationToken = default(CancellationToken)) => Task.Run(() => GetAllCurrencies(), cancellationToken);
 
         /// <summary>
@@ -106,8 +109,8 @@ namespace ErsteApi.Exchange
         /// </summary>
         /// <param name="cancellationToken">Token to cancel this operation.</param>
         /// <returns>Enumerable of all exchange rates.</returns>
-        public Task<IEnumerable<Rate>> 
-            GetAllExchangeRatesAsync(CancellationToken cancellationToken = default(CancellationToken))=> Task.Run(() => GetAllExchangeRates(), cancellationToken);
+        public Task<IEnumerable<Rate>>
+            GetAllExchangeRatesAsync(CancellationToken cancellationToken = default(CancellationToken)) => Task.Run(() => GetAllExchangeRates(), cancellationToken);
 
         public Task<IDictionary<DateTime, IEnumerable<Rate>>> GetAllExchangeRatesInPeriodAsync
           (DateTime? from = null, DateTime? to = null, CancellationToken cancellationToken = default(CancellationToken))

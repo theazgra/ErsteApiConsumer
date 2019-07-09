@@ -1,13 +1,14 @@
 {
     "defaultLanguage": "en",
-    "baseApiUrl": "baseApiUrl",
+    "baseApiUrl": "https://webapi.developers.erstegroup.com/api/csas/public/sandbox/v2/",
     "defaultTimeout": 1000,
     "throwOnException": true,
     "exchangeRateConfig": {
-        "currenciesUrl": "currenciesUrl",
-        "exchangeRatesUrl": "exchangeRatesUrl",
-        "crossRatesUrl": "crossRatesUrl",
-        "exchangeRatesDayTimesUrl": "exchangeRatesDayTimesUrl",
-        "healthCheckUrl": "healthCheckUrl"
+        "baseUrl": "rates/exchangerates/",
+        "currenciesUrl": "currencies",
+        "exchangeRatesUrl": "exchangerates",
+        "crossRatesUrl": "cross",
+        "exchangeRatesDayTimesUrl": "times",
+        "healthCheckUrl": "health"
     }
 }

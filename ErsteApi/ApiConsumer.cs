@@ -1,5 +1,8 @@
 ﻿using ErsteApi.Configuration;
 using ErsteApi.Rest;
+using System;
+using System.Linq;
+using System.Text;
 
 namespace ErsteApi
 {
@@ -38,12 +41,39 @@ namespace ErsteApi
             baseRestClient.RestQueryParameters.Add(new RestParameter("lang", language));
         }
 
-        private string CombineUrl(string baseUrl, string apiUrl)
+        private string CombineUrl(params string[] urls)
         {
-            if (baseUrl.Substring(baseUrl.Length - 1) != "/")
-                baseUrl += "/";
+            if (urls.Length == 0)
+                return string.Empty;
 
-            string combined = baseUrl + apiUrl;
+            StringBuilder urlBuilder = new StringBuilder(urls[0]);
+            for (int i = 1; i < urls.Length; i++)
+            {
+                if (urlBuilder.ToString().Last() != '/')
+                {
+                    if (urls[i].First() == '/')
+                    {
+                        urlBuilder.Append(urls[i]);
+                    }
+                    else
+                    {
+                        urlBuilder.Append('/' + urls[i]);
+                    }
+                }
+                else
+                {
+                    if (urls[i].First() == '/')
+                    {
+                        urlBuilder.Append(urls[i].Substring(1));
+                    }
+                    else
+                    {
+                        urlBuilder.Append(urls[i]);
+                    }
+                }
+            }
+
+            string combined = urlBuilder.ToString();
             return combined;
         }
 
@@ -52,10 +82,10 @@ namespace ErsteApi
         /// </summary>
         /// <param name="apiUrl">Requested api location.</param>
         /// <returns>Common Rest client.</returns>
-        internal Client GetClient(string apiUrl)
+        internal Client GetClient(string apiGroupUrl, string methodUrl)
         {
 
-            Client restClient = new Client(CombineUrl(baseUrl, apiUrl));
+            Client restClient = new Client(CombineUrl(baseUrl, apiGroupUrl, methodUrl));
             AddBasicParameters(restClient);
             return restClient;
         }
@@ -66,11 +96,24 @@ namespace ErsteApi
         /// <typeparam name="T">Type to which parse response.</typeparam>
         /// /// <param name="apiUrl">Requested api location.</param>
         /// <returns>Typed rest client.</returns>
-        internal Client<T> GetClient<T>(string apiUrl)
+        internal Client<T> GetClient<T>(string apiGroupUrl, string methodUrl)
         {
-            Client<T> restClient = new Client<T>(CombineUrl(baseUrl, apiUrl));
+            Client<T> restClient = new Client<T>(CombineUrl(baseUrl, apiGroupUrl, methodUrl));
             AddBasicParameters(restClient);
             return restClient;
+        }
+
+        protected abstract string GetGroupUrl();
+
+        public bool HealthCheck()
+        {
+            string groupUrl = GetGroupUrl();
+            string healthMethodUrl = "health";
+
+            var client = GetClient(groupUrl, healthMethodUrl);
+            var response = client.ExecuteRequest();
+
+            return (response.StatusCode == System.Net.HttpStatusCode.NoContent);
         }
 
     }

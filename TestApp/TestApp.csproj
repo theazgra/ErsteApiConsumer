@@ -9,4 +9,10 @@
     <ProjectReference Include="..\ErsteApi\ErsteApi.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="api-secret.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
